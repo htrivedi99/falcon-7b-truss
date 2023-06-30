@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: truss-falcon-7b
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: truss-falcon-7b-layer
+  template:
+    metadata:
+      labels:
+        component: truss-falcon-7b-layer
+    spec:
+      containers:
+      - name: truss-falcon-7b-container
+        image: htrivedi05/truss-falcon-7b:latest
+        ports:
+          - containerPort: 8080
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: truss-falcon-7b-service
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    component: truss-falcon-7b-layer
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
